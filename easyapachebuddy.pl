@@ -1,6 +1,6 @@
 #!/usr/local/cpanel/3rdparty/bin/perl
 
-# Version 1.0
+# Version 1.1
 
 # This is a fork of apache2buddy.pl but modified for use on cPanel servers only checking EasyApache 4 settings 
 # (MultiPHP, DefaultPHP, PHP-FPM settings). users can be passed using the --user flag, and individual php-fpm settings will be displayed.
