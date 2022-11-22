@@ -15,7 +15,7 @@ use Time::Piece;
 use Time::Seconds;
 use File::Find;
 #
-# Version 1.3
+# Version 1.4
 #
 ############################################################################################################
 #
@@ -1408,7 +1408,7 @@ sub generate_standard_report {
  	our $servername;
 	our $public_ip_address;
 
-	print "Apache2buddy.pl report for server: ${CYAN}$servername${ENDC} \(${CYAN}$public_ip_address${ENDC}\):\n";
+	print "easyapachebuddy.pl report for server: ${CYAN}$servername${ENDC} \(${CYAN}$public_ip_address${ENDC}\):\n";
 	# show what we're going to use to generate our numbers
 	print "\nSettings considered for this report:\n"; # exempt from NOINFO directive. 
 	if ( ! $NOCHKPID) {
