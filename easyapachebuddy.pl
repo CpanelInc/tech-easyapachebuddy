@@ -15,7 +15,7 @@ use Time::Piece;
 use Time::Seconds;
 use File::Find;
 #
-# Version 1.4
+# Version 1.5
 #
 ############################################################################################################
 #
@@ -1812,7 +1812,11 @@ sub preflight_checks {
 	# Check 6
 	# first thing we do is get the pid of the process listening on the 
 	# specified port
-	if ( ! $NOINFO ) { show_info_box(); print "We are checking the service running on port ${CYAN}$port${ENDC}...\n" }
+	if ( ! $NOINFO ) { 
+        show_info_box(); 
+        print "We are checking the service running on port ${CYAN}$port${ENDC}...\n"; 
+        check_for_ea_nginx();
+    }
 
 	our $pid;
 	if (! $pid ) {  
@@ -2948,4 +2952,29 @@ sub get_json_from_command {
 
 sub get_whmapi1 {
     return get_json_from_command( 'whmapi1', '--output=json', @_ );
+}
+
+sub check_for_ea_nginx {
+    if ( -e '/etc/nginx/ea-nginx/settings.json' ) {
+        show_ok_box();
+        print "EA-NginX installed and configured\n";
+        my $rawdata = Cpanel::SafeRun::Timed::timedsaferun( 2, 'cat', '/etc/nginx/ea-nginx/settings.json' );
+        my $output = decode_json $rawdata;
+        show_info_box();
+        print "\t\\_ Apache Port: " . $output->{apache_port} . "\n";
+        print "\t\\_ Apache SSL Port: " . $output->{apache_ssl_port} . "\n";
+        print "\t\\_ Client Max Body Size: " . $output->{client_max_body_size} . "\n";
+        if ( -e '/etc/nginx/ea-nginx/cache.json' ) {
+            my $rawdata2 = Cpanel::SafeRun::Timed::timedsaferun( 2, 'cat', '/etc/nginx/ea-nginx/cache.json' );
+            my $output2 = decode_json $rawdata2;
+            print "\t\\_ Caching Enabled: " . $output2->{enabled} . "\n";
+            print "\t\\_ Inactive Time: " . $output2->{inactive_time} . "\n";
+            print "\t\\_ Levels: " . $output2->{levels} . "\n";
+            my $logging = ($output2->{logging}) ? "Enabled" : "Disabled";
+            print "\t\\_ Logging: " . $logging . "\n";
+            print "\t\\_ Proxy Cache Background Update: " . $output2->{proxy_cache_background_update} . "\n";
+            my $xcacheheader =  ($output2->{x_cache_header}) ? "True" : "False";
+            print "\t\\_ X-Cache Header: " . $xcacheheader  . "\n";
+        }
+    }
 }
